@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static sun.plugin2.util.PojoUtil.toJson;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ public class SampleWebAppApplicationTests {
 
 	@Autowired
 	private MockMvc mockMvc;
+	ObjectMapper objectMapper;
 
 	@Test
 	public void shouldReturnDefaultMessage() throws Exception {
@@ -36,9 +38,11 @@ public class SampleWebAppApplicationTests {
 
 		User user = new User("Tom");
 
-		this.mockMvc.perform(post("/users"))
-				.content(user)
-				.andExpect(status().is2xxSuccessful());
+		objectMapper=new ObjectMapper();
+		this.mockMvc.perform(post("/users")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(user)))
+				.andExpect(status().isCreated());
 	}
 
 }
